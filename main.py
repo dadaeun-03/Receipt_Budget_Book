@@ -62,7 +62,7 @@ def main():
                 image_name=target_image,
                 all_text=all_text,
                 confidence=avg_confidence,
-                total_amount=0
+                ocr_items=ocr_raw["ocr_result"]
             )
             print("🎉 모든 프로세스가 성공적으로 완료되었습니다!")
             
@@ -73,6 +73,7 @@ def main():
             # 작업이 끝나면 임시로 받았던 이미지 파일 삭제
             if os.path.exists(local_temp_path):
                 os.remove(local_temp_path)
+        break
 
 if __name__ == "__main__":
     main()
