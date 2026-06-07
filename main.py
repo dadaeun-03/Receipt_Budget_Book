@@ -2,12 +2,23 @@
 import os
 import requests
 from database import SupabaseManager
-from ysz_ocr import run_ocr
-
+from ysz_ocr import run_ocr, PaddleOCR
 def main():
     # 1. Supabase 매니저 생성
     db_manager = SupabaseManager()
-    
+
+    # 모델 한 번만 로드 ← 여기 추가
+    print("PaddleOCR 모델 로드 중...")
+    ocr_model = PaddleOCR(
+        lang="korean",
+        use_doc_orientation_classify=False,
+        use_doc_unwarping=False,
+        use_textline_orientation=False,
+        text_det_limit_side_len=1536,
+        text_det_limit_type="max",
+        enable_mkldnn=False,
+    )
+
     print("1. Supabase Storage에서 이미지 목록을 조회하는 중...")
     images = db_manager.get_image_list(bucket_name="image")
     
@@ -46,7 +57,7 @@ def main():
         try:
             print("2. PaddleOCR 분석 시작...")
             # ysz_ocr.py에 있는 run_ocr 함수를 실행시켜 이미지 분석
-            ocr_raw = run_ocr(local_temp_path, "receipt_ocr_raw.json")
+            ocr_raw = run_ocr(local_temp_path, "receipt_ocr_raw.json", ocr_model=ocr_model)
             
             # 4. DB에 넣기 위해 텍스트 조각들을 하나로 합침
             all_text_list = [item["text"] for item in ocr_raw["ocr_result"]]
