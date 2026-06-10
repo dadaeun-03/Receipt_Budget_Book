@@ -341,16 +341,13 @@ def save_parsed_result(parsed_result: Dict[str, Any], output_path: str) -> None:
         json.dump(parsed_result, f, ensure_ascii=False, indent=2)
 
 
-def run_receipt_parser(
-    raw_json_path: str = "receipt_ocr_raw.json",
-    output_path: str = "receipt_ocr_parsed.json",
-) -> Dict[str, Any]:
-    raw_result = load_raw_result(raw_json_path)
-    parsed_result = parse_receipt(raw_result)
-    save_parsed_result(parsed_result, output_path)
-    print(f"파싱 결과 저장 완료: {output_path}")
-    return parsed_result
+def run_receipt_parser(ocr_raw_id: int, db_manager) -> Dict[str, Any]:
+    result = db_manager.get_ocr_items(ocr_raw_id)
+    items = result.data
 
+    for item in items:
+        if isinstance(item["box"], str):
+            item["box"] = json.loads(item["box"])
 
-if __name__ == "__main__":
-    run_receipt_parser()
+    raw_result = {"image_path": None, "ocr_result": items}
+    return parse_receipt(raw_result)
