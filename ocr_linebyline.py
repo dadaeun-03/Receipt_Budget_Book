@@ -98,6 +98,14 @@ def group_ocr_items_into_lines(
     return lines
 
 
+def load_raw_result(json_path: str) -> Dict[str, Any]:
+    with open(json_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_line_result(line_result: Dict[str, Any], output_path: str) -> None:
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(line_result, f, ensure_ascii=False, indent=2)
+
 def build_line_result(raw_result: Dict[str, Any]) -> Dict[str, Any]:
     """
     ysz_ocr.py의 raw_result 전체를 받아 line 단위 결과 JSON 구조로 변환한다.
