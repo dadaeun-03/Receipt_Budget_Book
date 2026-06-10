@@ -3,6 +3,7 @@ import os
 import requests
 from database import SupabaseManager
 from ysz_ocr import run_ocr, PaddleOCR
+from ocr_linebyline import run_line_grouping
 def main():
     # 1. Supabase 매니저 생성
     db_manager = SupabaseManager()
