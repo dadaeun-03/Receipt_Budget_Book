@@ -309,11 +309,9 @@ def extract_items(line_result: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 #--------------------------------------------최종 실행 파트--------------------------------------------------
 
-def parse_receipt(raw_result: Dict[str, Any]) -> Dict[str, Any]:
-    line_result = build_line_result(raw_result)
-
+def parse_receipt(line_result: Dict[str, Any]) -> Dict[str, Any]:
     parsed = {
-        "image_path": raw_result.get("image_path"),
+        "image_path": line_result.get("image_path"),
         "store_name": extract_store_name(line_result),
         "purchase_date": extract_date(line_result),
         "items": extract_items(line_result),
@@ -350,4 +348,5 @@ def run_receipt_parser(ocr_raw_id: int, db_manager) -> Dict[str, Any]:
             item["box"] = json.loads(item["box"])
 
     raw_result = {"image_path": None, "ocr_result": items}
-    return parse_receipt(raw_result)
+    line_result = build_line_result(raw_result)
+    return parse_receipt(line_result)

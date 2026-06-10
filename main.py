@@ -3,7 +3,6 @@ import os
 import requests
 from database import SupabaseManager
 from ysz_ocr import run_ocr, PaddleOCR
-from ocr_linebyline import run_line_grouping
 from receipt_parser import run_receipt_parser
 def main():
     # 1. Supabase 매니저 생성
@@ -77,7 +76,6 @@ def main():
                 confidence=avg_confidence,
                 ocr_items=ocr_raw["ocr_result"]
             )
-            line_result = run_line_grouping(ocr_raw_id, db_manager)
 
             print("4. 영수증 파싱 중...")
             parsed = run_receipt_parser(ocr_raw_id, db_manager)
