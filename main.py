@@ -69,12 +69,13 @@ def main():
             
             print("3. OCR 결과를 Supabase DB에 저장 중...")
             # database.py의 insert_ocr_result 함수를 실행시켜 DB에 저장
-            db_manager.insert_ocr_result(
+            ocr_raw_id = db_manager.insert_ocr_result(
                 image_name=target_image,
                 all_text=all_text,
                 confidence=avg_confidence,
                 ocr_items=ocr_raw["ocr_result"]
             )
+            line_result = run_line_grouping(ocr_raw_id, db_manager)
             print("🎉 모든 프로세스가 성공적으로 완료되었습니다!")
             
         except Exception as e:
