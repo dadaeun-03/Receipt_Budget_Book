@@ -37,4 +37,11 @@ class SupabaseManager:
             }
             for item in ocr_items
         ]
-        return self.supabase.table("ocr_raw_items").insert(items_data).execute()
+        self.supabase.table("ocr_raw_items").insert(items_data).execute()
+        return ocr_raw_id
+    
+    def get_ocr_items(self, ocr_raw_id: int):
+        return self.supabase.table("ocr_raw_items").select("*").eq("ocr_raw_id", ocr_raw_id).execute()
+
+    def get_ocr_raw(self, ocr_raw_id: int):
+        return self.supabase.table("ocr_raw").select("*").eq("id", ocr_raw_id).single().execute()
