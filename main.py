@@ -3,7 +3,7 @@ import os
 import requests
 from database import SupabaseManager
 from ysz_ocr import run_ocr, PaddleOCR
-from ocr_linebyline import run_line_grouping
+from receipt_parser import run_receipt_parser
 def main():
     # 1. Supabase 매니저 생성
     db_manager = SupabaseManager()
@@ -76,7 +76,19 @@ def main():
                 confidence=avg_confidence,
                 ocr_items=ocr_raw["ocr_result"]
             )
-            line_result = run_line_grouping(ocr_raw_id, db_manager)
+
+            print("4. 영수증 파싱 중...")
+            parsed = run_receipt_parser(ocr_raw_id, db_manager)
+
+            print("5. 파싱 결과 DB 저장 중...")
+            receipt_id = db_manager.insert_receipt(
+                ocr_raw_id=ocr_raw_id,
+                store_name=parsed["store_name"],
+                purchased_st=parsed["purchase_date"],
+                total_amount=parsed["total_amount"]
+            )
+            db_manager.insert_receipt_items(receipt_id, parsed["items"])
+
             print("🎉 모든 프로세스가 성공적으로 완료되었습니다!")
             
         except Exception as e:

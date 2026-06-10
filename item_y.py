@@ -2,16 +2,15 @@
 import json
 import re
 
-def parse_receipt_hybrid_engine(raw_path="receipt_ocr_raw.json"):
- 
-    try:
-        with open(raw_path, "r", encoding="utf-8") as f:
-            raw_data = json.load(f)
-    except FileNotFoundError:
-        print(f"[Error] {raw_path} 파일이 없습니다. main.py를 먼저 실행하세요.")
-        return []
+def parse_receipt_hybrid_engine(ocr_raw_id: int, db_manager):
+    result = db_manager.get_ocr_items(ocr_raw_id)
+    items = result.data
 
-    ocr_result = raw_data.get("ocr_result", [])
+    for item in items:
+        if isinstance(item["box"], str):
+            item["box"] = json.loads(item["box"])
+
+    ocr_result = items
     if not ocr_result:
         return []
 
